@@ -1,0 +1,1530 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🛡️ 함께 배우는 안전 나침반</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FF7E5F;
+            --primary-dark: #FEB47B;
+            --secondary: #6B66FF;
+            --success: #34D399;
+            --danger: #FF6464;
+            --bg-soft: #FFFDF9;
+        }
+
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            font-family: 'Nanum Gothic', sans-serif;
+            background-color: var(--bg-soft);
+            overflow: hidden;
+            color: #333;
+            line-height: 1.4;
+        }
+
+        #app {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            background: #fffcf5;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #scaler {
+            width: 1280px;
+            height: 800px;
+            background: #fffcf5;
+            position: relative;
+            transform-origin: center;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .screen {
+            display: none;
+            padding: 20px 40px;
+            width: 100%;
+            height: 100%;
+            animation: bounceIn 0.5s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes bounceIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .top-bar {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            width: 100%;
+            max-width: 1500px;
+            margin: 0 auto 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        header h1 {
+            font-size: 50px;
+            font-weight: 900;
+            color: #FF7E5F;
+            margin-bottom: 8px;
+        }
+
+        header p {
+            font-size: 24px;
+            color: #666;
+            font-weight: 800;
+        }
+
+        .path-box {
+            flex: 1;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: #FFF9F0;
+            padding: 12px 30px;
+            border-radius: 60px;
+            border: 4px solid #FFEDD5;
+            font-size: 20px;
+            font-weight: 900;
+            color: #FB923C;
+            box-shadow: 0 4px 0 #FFEDD5;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            border-radius: 15px;
+            background: white;
+            border: 4px solid #FFEDD5;
+            font-size: 22px;
+            color: #FB923C;
+            cursor: pointer;
+            box-shadow: 0 4px 0px #FFEDD5;
+            flex-shrink: 0;
+            transition: all 0.1s;
+        }
+
+        .btn-back:active {
+            transform: translateY(3px);
+            box-shadow: 0 1px 0 #FFEDD5;
+        }
+
+        .grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            max-width: 1500px;
+            margin: 0 auto;
+            padding: 10px;
+        }
+
+        .cat-card {
+            width: 300px;
+            background: white;
+            border-radius: 40px;
+            padding: 30px 25px;
+            text-align: center;
+            cursor: pointer;
+            box-shadow: 0 10px 0px #F3F4F6;
+            border: 4px solid #F3F4F6;
+            transition: all 0.2s;
+        }
+
+        .cat-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+        }
+
+        .cat-card .ci {
+            font-size: 64px;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .cat-card .cn {
+            font-size: 24px;
+            font-weight: 900;
+            color: #333;
+            word-break: keep-all;
+        }
+
+        #major-grid {
+            display: flex !important;
+            flex-wrap: wrap !important;
+            justify-content: center !important;
+            gap: 20px !important;
+            width: 100%;
+            max-width: 1250px;
+            margin: 0 auto;
+            padding: 10px;
+        }
+
+        #major-grid .cat-card {
+            width: 280px !important;
+            padding: 25px 20px !important;
+        }
+
+        #sub-grid {
+            display: grid !important;
+            grid-template-columns: repeat(3, 1fr) !important;
+            gap: 8px !important;
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .sub-card {
+            width: 100% !important;
+            padding: 10px 15px !important;
+            display: flex !important;
+            flex-direction: row !important;
+            align-items: center !important;
+            justify-content: flex-start !important;
+            gap: 10px !important;
+            white-space: nowrap !important;
+            box-shadow: 0 4px 0px #F3F4F6 !important;
+            border-radius: 16px !important;
+        }
+
+        .sub-card .ci {
+            font-size: 28px !important;
+            margin-bottom: 0 !important;
+            display: inline-block !important;
+        }
+
+        .sub-card .cn {
+            font-size: 24px !important;
+            font-weight: 800 !important;
+            word-break: keep-all !important;
+        }
+
+        .list-wrap {
+            max-width: 1400px;
+            margin: 0 auto;
+            height: 590px;
+            overflow-y: auto;
+            padding: 10px;
+            display: grid !important;
+            grid-template-columns: repeat(4, 1fr) !important;
+            gap: 12px !important;
+        }
+
+        .list-wrap::-webkit-scrollbar {
+            width: 10px;
+        }
+        .list-wrap::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.05);
+            border-radius: 10px;
+        }
+        .list-wrap::-webkit-scrollbar-thumb {
+            background: var(--success);
+            border-radius: 10px;
+        }
+
+        .v-card {
+            background: white;
+            border-radius: 25px;
+            padding: 12px 15px;
+            margin-bottom: 0;
+            cursor: pointer;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 10px;
+            box-shadow: 0 6px 0px #F1F5F9;
+            border: 4px solid #F1F5F9;
+            transition: all 0.2s;
+            height: 95px;
+        }
+
+        .v-num {
+            background: var(--secondary);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 900;
+            margin-right: 0;
+            margin-bottom: 0;
+            box-shadow: 0 4px 0 #504BCB;
+            flex-shrink: 0;
+        }
+
+        .v-card-title {
+            font-size: 18px;
+            font-weight: 800;
+            color: #2d3748;
+            flex: 1;
+            word-break: keep-all;
+            line-height: 1.3;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-align: left;
+        }
+
+        .fairy-wrap {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 15px;
+        }
+
+        .bubble {
+            background: white;
+            padding: 18px 40px;
+            border-radius: 35px;
+            border: 5px solid #FFD93D;
+            position: relative;
+            font-size: 28px;
+            font-weight: 900;
+            color: #444;
+            box-shadow: 0 8px 0 #FFD93D;
+            max-width: 85%;
+            white-space: nowrap;
+            width: fit-content;
+            line-height: 1.3;
+        }
+
+        .bubble::after {
+            content: '';
+            position: absolute;
+            left: -22px;
+            top: 50%;
+            transform: translateY(-50%);
+            border-top: 18px solid transparent;
+            border-bottom: 18px solid transparent;
+            border-right: 22px solid #FFD93D;
+        }
+
+        .summary-box {
+            background: white;
+            border: 6px solid #E2E8F0;
+            border-radius: 45px;
+            padding: 35px 55px;
+            width: 100%;
+            max-width: 1350px;
+            box-shadow: 0 15px 0 #E2E8F0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        .step-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            text-align: center;
+            max-width: 1550px;
+            margin: 0 auto;
+            padding: 10px;
+            height: 100%;
+        }
+
+        .step-title {
+            font-size: 32px;
+            font-weight: 900;
+            color: #1e293b;
+            width: 100%;
+            background: white;
+            padding: 22px 40px;
+            border-radius: 35px;
+            box-shadow: 0 8px 0 #F1F5F9;
+            border: 4px solid #F1F5F9;
+            line-height: 1.5;
+        }
+
+        .q-box {
+            font-size: 36px;
+            font-weight: 900;
+            color: #0F172A;
+            line-height: 1.5;
+            background: #F0F9FF;
+            padding: 35px;
+            border-radius: 30px;
+            border: 4px solid #BAE6FD;
+            box-shadow: 0 8px 0px #BAE6FD;
+            margin-bottom: 40px;
+            text-align: left;
+            white-space: pre-wrap;
+            width: 100%;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            width: 100%;
+            max-width: 1350px;
+            margin-top: 15px;
+        }
+
+        .opt-btn {
+            background: white;
+            border: 5px solid #E2E8F0;
+            padding: 25px 45px;
+            border-radius: 30px;
+            font-size: 28px;
+            font-weight: 800;
+            color: #475569;
+            cursor: pointer;
+            box-shadow: 0 8px 0 #E2E8F0;
+            text-align: left;
+            transition: all 0.2s;
+            line-height: 1.5;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 20px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 25px 80px;
+            border-radius: 40px;
+            font-size: 32px;
+            font-weight: 900;
+            cursor: pointer;
+            box-shadow: 0 10px 0px #E66A4E;
+            transition: all 0.2s;
+        }
+
+        .btn.sec {
+            background: #6B66FF;
+            box-shadow: 0 10px 0px #504BCB;
+            font-size: 28px;
+            padding: 22px 70px;
+        }
+
+        .btn:disabled {
+            background: #cbd5e1;
+            box-shadow: 0 10px 0px #94a3b8;
+            cursor: not-allowed;
+            opacity: 0.8;
+        }
+
+        .result-box {
+            background: white;
+            border: 8px solid #FFEDD5;
+            border-radius: 60px;
+            padding: 35px 60px;
+            width: 100%;
+            max-width: 1150px;
+            box-shadow: 0 20px 0 #FFEDD5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .stats-wrap {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            width: 100%;
+            margin-top: 30px;
+            height: 250px;
+            overflow-y: auto;
+            padding: 15px;
+            border-radius: 30px;
+            background: #fffcf5;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px 25px;
+            border-radius: 30px;
+            border: 3px solid #F1F5F9;
+            text-align: left;
+            box-shadow: 0 6px 0 #F1F5F9;
+        }
+
+        .stat-title {
+            font-size: 20px;
+            color: #64748b;
+            font-weight: 800;
+            margin-bottom: 10px;
+            border-bottom: 3px solid #F1F5F9;
+            padding-bottom: 8px;
+        }
+
+        .stat-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .stat-item {
+            background: #FFF9F0;
+            color: #FB923C;
+            padding: 8px 15px;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 900;
+            border: 2px solid #FFEDD5;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            line-height: 1.2;
+        }
+
+        .item-major {
+            background: #FFF9F0;
+            color: #FB923C;
+            border-color: #FFEDD5;
+        }
+
+        .item-sub {
+            background: #F0F9FF;
+            color: #3B82F6;
+            border-color: #DBEAFE;
+        }
+
+        #popup-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 10000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .popup-card {
+            background: white;
+            padding: 50px;
+            border-radius: 65px;
+            text-align: center;
+            max-width: 900px;
+            width: 95%;
+            border: 12px solid #F3F4F6;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        #overlay {
+            position: fixed;
+            inset: 0;
+            background: #fff;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .spinner {
+            width: 100px;
+            height: 100px;
+            border: 12px solid #F3F4F6;
+            border-top: 12px solid #FFD93D;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .hint-box {
+            background: #FFF9F0;
+            padding: 25px;
+            border-radius: 30px;
+            margin-top: 20px;
+            font-size: 26px;
+            border: 4px dashed #FFD93D;
+            text-align: left;
+            display: none;
+            line-height: 1.5;
+        }
+
+        /* 대영역별 배경색 클래스 */
+        .cat-living { background: #FFEFED !important; border-color: #FFD1CE !important; box-shadow: 0 10px 0px #FFD1CE !important; }
+        .cat-traffic { background: #E6F7FF !important; border-color: #BAE7FF !important; box-shadow: 0 10px 0px #BAE7FF !important; }
+        .cat-violence { background: #F6FFED !important; border-color: #D9F7BE !important; box-shadow: 0 10px 0px #D9F7BE !important; }
+        .cat-drug { background: #FFF7E6 !important; border-color: #FFE7BA !important; box-shadow: 0 10px 0px #FFE7BA !important; }
+        .cat-disaster { background: #F9F0FF !important; border-color: #EFDBFF !important; box-shadow: 0 10px 0px #EFDBFF !important; }
+        .cat-job { background: #FFF1F0 !important; border-color: #FFCCC7 !important; box-shadow: 0 10px 0px #FFCCC7 !important; }
+        .cat-aid { background: #E6FFFB !important; border-color: #B5F5EC !important; box-shadow: 0 10px 0px #B5F5EC !important; }
+
+        .user-name-tag {
+            background: white;
+            padding: 8px 20px;
+            border-radius: 30px;
+            border: 3px solid #E2E8F0;
+            font-size: 20px;
+            font-weight: 800;
+            color: #64748b;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 0 #F1F5F9;
+        }
+
+        @keyframes bounceClick {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-5px) scale(0.95); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes ripple {
+            0% { transform: scale(1); opacity: 0.8; }
+            100% { transform: scale(2.2); opacity: 0; }
+        }
+
+        .recording-indicator {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 12px;
+            padding: 12px 24px;
+            background: rgba(255, 59, 48, 0.08);
+            border-radius: 20px;
+            border: 2px solid rgba(255,59,48,0.2);
+        }
+
+        .rec-dot-wrap {
+            position: relative;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .rec-dot {
+            width: 16px;
+            height: 16px;
+            background: #FF3B30;
+            border-radius: 50%;
+            position: relative;
+            z-index: 2;
+        }
+
+        .rec-ripple {
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            background: #FF3B30;
+            border-radius: 50%;
+            animation: ripple 1.2s ease-out infinite;
+        }
+
+        .rec-ripple:nth-child(2) { animation-delay: 0.4s; }
+        .rec-ripple:nth-child(3) { animation-delay: 0.8s; }
+
+        .rec-text {
+            font-size: 22px;
+            font-weight: 800;
+            color: #FF3B30;
+        }
+
+        .skip-btn {
+            background: #F1F5F9;
+            color: #64748B;
+            border: 2px solid #CBD5E1;
+            border-radius: 30px;
+            padding: 10px 28px;
+            font-size: 18px;
+            font-weight: 800;
+            cursor: pointer;
+            font-family: 'Nanum Gothic', sans-serif;
+            transition: all 0.15s;
+            display: none;
+            margin-top: 10px;
+            width: 100%;
+        }
+        .skip-btn:hover { background: #E2E8F0; }
+        .skip-btn:active { transform: translateY(2px); }
+
+        .listen-record-wrap {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 15px;
+            width: 100%;
+        }
+
+        .listen-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--secondary);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 14px 30px;
+            font-size: 22px;
+            font-weight: 900;
+            cursor: pointer;
+            box-shadow: 0 6px 0 #504BCB;
+            font-family: 'Nanum Gothic', sans-serif;
+            transition: all 0.15s;
+            flex: 1;
+        }
+        .listen-btn:active { transform: translateY(3px); box-shadow: 0 2px 0 #504BCB; }
+        .listen-btn.speaking { background: #818CF8; animation: none; }
+
+        .record-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--danger);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 14px 30px;
+            font-size: 22px;
+            font-weight: 900;
+            cursor: pointer;
+            box-shadow: 0 6px 0 #CC0000;
+            font-family: 'Nanum Gothic', sans-serif;
+            transition: all 0.15s;
+            flex: 1;
+        }
+        .record-btn:active { transform: translateY(3px); box-shadow: 0 2px 0 #CC0000; }
+        .record-btn.recording { background: #ef4444; animation: blink 1s infinite; }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        .transcript-box {
+            background: #F8FAFC;
+            border: 3px solid #E2E8F0;
+            border-radius: 20px;
+            padding: 15px 25px;
+            margin-top: 15px;
+            font-size: 22px;
+            font-weight: 700;
+            color: #334155;
+            min-height: 60px;
+            display: none;
+            text-align: left;
+            line-height: 1.5;
+            width: 100%;
+        }
+
+        .save-reading-btn {
+            background: var(--success);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 14px 40px;
+            font-size: 22px;
+            font-weight: 900;
+            cursor: pointer;
+            box-shadow: 0 6px 0 #10B981;
+            font-family: 'Nanum Gothic', sans-serif;
+            transition: all 0.15s;
+            margin-top: 12px;
+            display: none;
+            width: 100%;
+        }
+        .save-reading-btn:active { transform: translateY(3px); box-shadow: 0 2px 0 #10B981; }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <div id="scaler">
+            <div id="popup-overlay" onclick="closePopup()">
+                <div class="popup-card" onclick="event.stopPropagation()">
+                    <div id="p-header-area">
+                        <span id="p-icon" style="font-size:100px; margin-bottom:20px; display:block;"></span>
+                        <div id="p-title" style="font-size:48px; font-weight:900; margin-bottom:15px;"></div>
+                        <div id="p-msg" style="font-size:30px; margin-bottom:25px; font-weight:800; line-height:1.5;"></div>
+                    </div>
+                    <div id="p-hint-box" class="hint-box"></div>
+                    <div style="display:flex; flex-direction:column; gap:15px; margin-top:30px;">
+                        <button id="p-hint-btn" class="btn sec hidden" onclick="revealHint()">💡 힌트 확인하기</button>
+                        <button id="p-btn" class="btn" style="width: 100%; border-radius:35px;" onclick="closePopup()">확인!
+                            ➔</button>
+                    </div>
+                </div>
+            </div>
+            <div id="tut-overlay" style="position: fixed; inset: 0; background: rgba(0, 0, 0, 0.7); z-index: 10001; display: none; align-items: center; justify-content: center; backdrop-filter: blur(10px);">
+                <div class="popup-card" style="max-width: 800px; padding: 60px;">
+                    <div style="font-size: 36px; font-weight: 900; color: var(--secondary); margin-bottom: 30px;">💡 영상 학습 방법</div>
+                    <div id="tut-step-1" style="display: none;">
+                        <div style="width: 280px; height: 160px; border: 4px solid #cbd5e1; border-radius: 10px; background: white; margin: 0 auto 30px; overflow: hidden; display: flex; flex-direction: column;">
+                            <div style="height: 24px; background: #e2e8f0; display: flex; align-items: center; padding: 0 8px; gap: 5px;">
+                                <div style="width:8px; height:8px; border-radius:50%; background:#f87171;"></div>
+                                <div style="width:8px; height:8px; border-radius:50%; background:#fbbf24;"></div>
+                                <div style="width:8px; height:8px; border-radius:50%; background:#34d399;"></div>
+                            </div>
+                            <div style="flex: 1; display: flex; align-items: center; justify-content: center; background: #1e293b;">
+                                <div style="width: 50px; height: 35px; background: #FF0000; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                                    <div style="width: 0; height: 0; border-top: 8px solid transparent; border-bottom: 8px solid transparent; border-left: 12px solid white;"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="font-size: 36px; font-weight: 800; line-height: 1.5; color: #333;">아래 버튼을 누르면<br><span style="color:var(--primary);">새 창에서 영상</span>이 열려요!</div>
+                    </div>
+                    <div id="tut-step-2" style="display: none;">
+                        <div style="width: 280px; height: 160px; border: 4px solid #cbd5e1; border-radius: 10px; background: white; margin: 0 auto 30px; overflow: hidden; display: flex; flex-direction: column; position: relative;">
+                            <div style="height: 24px; background: #e2e8f0; display: flex; align-items: center; justify-content: flex-end; padding: 0 8px; gap: 5px;">
+                                <div style="width: 20px; height: 16px; background: #f87171; color: white; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; border-radius: 3px;">X</div>
+                            </div>
+                            <div style="flex: 1; background: #1e293b;"></div>
+                            <div style="position: absolute; top: 12px; right: 5px; font-size: 40px; animation: bounceClick 1s infinite;">👆</div>
+                        </div>
+                        <div style="font-size: 36px; font-weight: 800; line-height: 1.5; color: #333;">영상을 끝까지 집중해서 본 뒤,<br>창의 <span style="color:var(--danger);">X 버튼을 눌러서</span> 꺼주세요.</div>
+                    </div>
+                    <div id="tut-step-3" style="display: none;">
+                        <div style="width: 280px; height: 160px; border: 4px solid #cbd5e1; border-radius: 10px; background: #fffcf5; margin: 0 auto 30px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative;">
+                            <div style="background: var(--success); color: white; padding: 10px 15px; border-radius: 15px; font-size: 16px; font-weight: bold; box-shadow: 0 4px 0 #10B981;">
+                                ✅ 영상을 다 봤어요!
+                            </div>
+                            <div style="position: absolute; top: 85px; left: 140px; font-size: 40px; animation: bounceClick 1s infinite;">👆</div>
+                        </div>
+                        <div style="font-size: 36px; font-weight: 800; line-height: 1.5; color: #333;">원래 화면으로 돌아와서<br><span style="color:var(--success);">[✅ 영상을 다 봤어요!]</span><br>버튼을 꼭 눌러주세요!</div>
+                    </div>
+                    <button id="tut-btn" class="btn" style="margin-top: 50px; width: 100%; justify-content: center; border-radius: 40px; font-size: 32px; padding: 30px;"></button>
+                </div>
+            </div>
+            <div id="overlay">
+                <div class="spinner"></div>
+                <p style="font-size:28px; color:#FF8400; font-weight:900; margin-top:40px;">준비 중... 🏃</p>
+            </div>
+            <div id="s-intro" class="screen active">
+                <div class="step-wrap" style="justify-content: center;">
+                    <div style="font-size: 150px; margin-bottom: 25px;">👷</div>
+                    <h1 style="font-size: 80px; color: var(--primary); font-weight: 900; margin-bottom: 10px;">함께 배우는 안전 나침반
+                    </h1>
+                    <p style="font-size: 28px; color: #666; font-weight: 800; margin-bottom: 40px; line-height: 1.6;">
+                        영상을 따라 안전 수칙을 배우고,<br>퀴즈를 풀어 메달과 트로피를 모아보세요! 🏅
+                    </p>
+                    <button class="btn" style="padding: 35px 100px; font-size: 44px;" onclick="goNameSelect()">시작하기!
+                        ➔</button>
+                </div>
+            </div>
+            <div id="s-name" class="screen">
+                <div class="step-wrap" style="justify-content: center;">
+                    <h1 style="font-size: 54px; color: var(--primary); font-weight: 900; margin-bottom: 20px;">🛡️ 함께 배우는 안전 나침반</h1>
+                    <header>
+                        <h1 style="color: var(--secondary); font-size: 60px;">반가워요!</h1>
+                        <p style="font-size: 32px;">이름을 선택해줘!</p>
+                    </header>
+                    <div style="width: 100%; max-width: 650px; margin: 35px 0;"><select id="name-select"
+                            style="width: 100%; padding: 25px 45px; font-size: 36px; font-weight: 800; border-radius: 40px; border: 6px solid #E2E8F0; background: white; appearance: none; cursor: pointer; text-align: center; box-shadow: 0 12px 0 #F1F5F9;">
+                            <option value="">-- 이름을 골라주세요! --</option>
+                        </select></div><button class="btn" onclick="confirmName()">학습 시작하기! ➔</button>
+                </div>
+            </div>
+            <div id="s-mic" class="screen">
+                <div class="step-wrap" style="justify-content: center;">
+                    <h1 style="font-size: 48px; color: var(--primary); font-weight: 900; margin-bottom: 10px;">🎙️ 마이크 켜는 방법</h1>
+                    <p style="font-size: 26px; color: #666; margin-bottom: 20px;">안전 나침반은 큰 소리로 읽어보는 학습이에요! 마이크를 켜주세요.</p>
+                    <div style="background: white; border: 5px solid #E2E8F0; border-radius: 30px; padding: 30px 40px; max-width: 850px; width: 100%; box-shadow: 0 10px 0 #E2E8F0; text-align: left;">
+                        <div style="display: flex; align-items: flex-start; gap: 20px; margin-bottom: 22px;">
+                            <div style="background: var(--primary); color: white; border-radius: 50%; width: 52px; height: 52px; display: flex; align-items: center; justify-content: center; font-size: 26px; font-weight: 900; flex-shrink: 0;">1</div>
+                            <div>
+                                <p style="font-size: 26px; font-weight: 900; margin: 0 0 5px;">브라우저 주소창 왼쪽 🔒 아이콘 클릭</p>
+                                <p style="font-size: 22px; color: #64748B; margin: 0;">주소창 왼쪽에 자물쇠 또는 <strong style="color:#FF3B30;">&#9432;</strong> 아이콘이 있어요</p>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: flex-start; gap: 20px; margin-bottom: 22px;">
+                            <div style="background: var(--primary); color: white; border-radius: 50%; width: 52px; height: 52px; display: flex; align-items: center; justify-content: center; font-size: 26px; font-weight: 900; flex-shrink: 0;">2</div>
+                            <div>
+                                <p style="font-size: 26px; font-weight: 900; margin: 0 0 5px;">메뉴에서 '마이크' → '허용' 선택</p>
+                                <p style="font-size: 22px; color: #64748B; margin: 0;">팝업에서 <strong>마이크</strong> 또는 <strong>Microphone</strong>을 찾아 허용해주세요</p>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: flex-start; gap: 20px;">
+                            <div style="background: var(--primary); color: white; border-radius: 50%; width: 52px; height: 52px; display: flex; align-items: center; justify-content: center; font-size: 26px; font-weight: 900; flex-shrink: 0;">3</div>
+                            <div>
+                                <p style="font-size: 26px; font-weight: 900; margin: 0 0 5px;">페이지 새로고침 후 아래 버튼 클릭!</p>
+                                <p style="font-size: 22px; color: #64748B; margin: 0;">허용 후 F5 키 또는 새로고침 버튼을 눌러주세요</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="margin: 25px 0; display: flex; flex-direction: column; gap: 15px; align-items: center;">
+                        <button class="btn" onclick="go('major')" style="font-size: 28px; padding: 22px 70px;">✅ 마이크 켜졌어요! 학습 시작</button>
+                        <button class="btn sec" onclick="skipMic()" style="background:#94A3B8; box-shadow: 0 10px 0px #64748B; font-size: 24px; padding: 18px 60px;">⏭ 마이크 없이 계속하기</button>
+                    </div>
+                </div>
+            </div>
+            <div id="s-major" class="screen">
+                <header>
+                    <div
+                        style="display:flex; align-items:center; justify-content:space-between; max-width:1400px; margin:0 auto; padding:0 20px;">
+                        <h1 style="font-size:44px;">🛡️ 함께 배우는 안전 나침반</h1>
+                        <div style="display:flex; gap:12px; align-items:center;">
+                            <div class="user-name-tag">👤 <span class="u-name"></span> 친구</div>
+                            <div id="top-medal"
+                                style="background:#FFF9F0; padding:10px 30px; border-radius:45px; border:4px solid #FFD93D; font-size:28px; font-weight:900; color:#FB923C;">
+                                🎖️ 내 메달: 0개</div>
+                        </div>
+                    </div>
+                    <p style="margin-top:10px;">배우고 싶은 안전 분야를 골라봐!</p>
+                </header>
+                <div id="major-grid" class="grid"></div>
+            </div>
+            <div id="s-sub" class="screen">
+                <div style="display:flex; align-items:center; justify-content:space-between; max-width:1400px; margin:0 auto; padding:0 20px;">
+                    <button class="btn-back" onclick="go('major')">⬅</button>
+                    <div class="user-name-tag">👤 <span class="u-name"></span> 친구</div>
+                </div>
+                <header style="margin-bottom: 10px;">
+                    <h1 id="sub-header" style="color:var(--secondary); font-size:44px;"></h1>
+                    <p style="margin-top:5px; font-size: 20px;">더 알고 싶은 내용을 선택해줘!</p>
+                </header>
+                <div id="sub-grid" class="grid"></div>
+            </div>
+            <div id="s-videos" class="screen">
+                <div style="display:flex; align-items:center; justify-content:space-between; max-width:1400px; margin:0 auto; padding:0 20px;">
+                    <button class="btn-back" onclick="go('sub')">⬅</button>
+                    <div class="user-name-tag">👤 <span class="u-name"></span> 친구</div>
+                </div>
+                <header style="margin-bottom: 10px;">
+                    <h1 id="vid-header" style="color:var(--success); font-size:44px;"></h1>
+                    <p style="margin-top:5px; font-size: 22px;">보고 싶은 영상을 선택해줘!</p>
+                </header>
+                <div class="list-wrap" id="vid-list"></div>
+            </div>
+            <div id="s-ready" class="screen">
+                <div class="top-bar"><button class="btn-back" onclick="go('videos')">⬅</button>
+                    <div class="path-box" id="path-ready"></div>
+                </div>
+                <div class="step-wrap">
+                    <div class="step-title" id="ready-title" style="margin-top:15px;"></div><button class="btn"
+                        style="margin-top:50px" onclick="watchVideo()">📺 영상 보러가기!</button><button id="btn-video-done"
+                        class="btn sec hidden" style="margin-top:30px;" onclick="goToSummary()">✅ 영상을 다 봤어요!</button>
+                </div>
+            </div>
+            <div id="s-summary" class="screen">
+                <div class="top-bar"><button class="btn-back" onclick="go('ready')">⬅</button>
+                    <div class="path-box" id="path-summary"></div>
+                </div>
+                <div class="step-wrap" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: calc(100% - 80px); width: 100%; text-align: center;">
+                    <div id="summary-instruction" style="background: #FF3B30; color: white; font-size: 36px; font-weight: 900; padding: 18px 50px; border-radius: 50px; box-shadow: 0 10px 0 #C92A20; border: 5px solid white; white-space: nowrap; animation: pulse 2s infinite; margin: 0 auto 30px; z-index: 10; width: fit-content; position: relative; display: inline-block;">
+                        🗣️ 큰 소리로 또박또박 따라 읽어보세요!
+                    </div>
+                    <div class="summary-box" style="position: relative; padding-top: 20px; width: 100%; max-width: 1100px; margin: 0 auto;">
+                        <div id="summary-step-num"
+                            style="background:var(--success); color:white; padding:10px 30px; border-radius:20px; font-size:26px; font-weight:900; margin-bottom:15px; position:relative; z-index:10;">
+                            요약 1 / ?</div>
+                        <div id="summary-content"
+                            style="font-size:40px; font-weight:800; line-height:1.5; color:#333; margin:15px 0; min-height:120px; display:block; text-align:center; word-break:keep-all; padding: 10px 0;">
+                        </div>
+                        <div class="listen-record-wrap">
+                            <button class="listen-btn" id="listen-btn" onclick="speakSummary()">
+                                🔊 듣기
+                            </button>
+                            <button class="record-btn" id="record-btn" onclick="toggleRecording()">
+                                🎤 녹음하기
+                            </button>
+                        </div>
+                        <div class="recording-indicator" id="recording-indicator">
+                            <div class="rec-dot-wrap">
+                                <div class="rec-ripple"></div>
+                                <div class="rec-ripple"></div>
+                                <div class="rec-dot"></div>
+                            </div>
+                            <span class="rec-text">녹음 중... 말해보세요!</span>
+                        </div>
+                        <div id="transcript-box" class="transcript-box" style="display:none; text-align:left; font-size:22px; font-weight:700; color:#334155; background:#F8FAFC; border:3px solid #E2E8F0; border-radius:20px; padding:15px 25px; margin-top:12px; min-height:60px; line-height:1.6;"></div>
+                        <button class="skip-btn" id="skip-btn" onclick="skipSummary()">⏭ 잘 안 들려요, 건너뛰기</button>
+                    </div>
+                </div>
+            </div>
+            <div id="s-quiz" class="screen">
+                <div class="top-bar"><button class="btn-back" onclick="go('summary')">⬅</button>
+                    <div class="path-box" id="path-quiz"></div>
+                </div>
+                <div class="step-wrap">
+                    <div class="q-box" id="q-text"></div>
+                    <div id="options-area" class="options-grid"></div>
+                </div>
+            </div>
+            <div id="s-result" class="screen">
+                <div class="step-wrap" style="justify-content: center;">
+                    <div class="result-box">
+                        <div style="font-size: 80px; margin-bottom: 10px;">🎉</div>
+                        <div style="font-size: 48px; font-weight:900; color: #1e293b;">안전 대장님 탄생!</div>
+                        <div id="total-medals" class="medal-count" style="font-size:32px; margin-top:10px;">🎖️ 전체 메달: 0개
+                        </div>
+                        <div class="stats-wrap">
+                            <div class="stat-card"><span class="stat-title">🏆 대영역별 트로피</span>
+                                <div id="major-stats" class="stat-list"></div>
+                            </div>
+                            <div class="stat-card"><span class="stat-title">🎖️ 소영역별 메달</span>
+                                <div id="sub-stats" class="stat-list"></div>
+                            </div>
+                        </div><button class="btn" style="margin-top:30px; width:100%; border-radius:35px;"
+                            onclick="go('major')">다른 공부 하러 가기! ➔</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        var GAS_WEBAPP_URL = ''; // 여기에 구글 앱스 스크립트 웹앱 배포 URL을 넣으세요 (예: https://script.google.com/macros/s/.../exec)
+        function callGas(funcName, args, successHandler) {
+            if (typeof google !== 'undefined') {
+                var runner = google.script.run;
+                if (successHandler) runner = runner.withSuccessHandler(successHandler);
+                runner[funcName].apply(runner, args);
+            } else if (GAS_WEBAPP_URL) {
+                var payload = { func: funcName, args: args || [] };
+                fetch(GAS_WEBAPP_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload) })
+                .then(r => r.json()).then(d => { if(successHandler) successHandler(d); }).catch(e => console.error(e));
+            } else {
+                console.warn('No GAS environment and GAS_WEBAPP_URL is empty.');
+                if (successHandler) successHandler(null);
+            }
+        }
+        var cats = [], studentName = "", studentStats = null, curMajor = null, curSub = null, curVids = [], curVid = null, qIdx = 1, curOptions = [], summaryPoints = [], curSumIdx = 0, lastIsOk = false, medalCount = 0;
+        var markerMap = { '①': '1', '②': '2', '③': '3', '④': '4', '⑤': '5', '⑥': '6', '⑦': '7', '⑧': '8', '⑨': '9', '⑩': '10' };
+        var sumTimer = null;
+        var fallbackCats = [
+            { name: '생활안전', icon: '🏠', color: 'cat-living', prefix: '생활', subCategories: ['실내안전', '다중이용시설 안전', '전기안전', '생활용품 안전', '식품안전', '실험실습안전', '체육 및 여가활동안전', '놀이활동안전', '계절놀이안전', '물놀이안전', '등산안전', '탈것안전', '현장체험안전', '유괴미아사고 예방'] },
+            { name: '교통안전', icon: '🚦', color: 'cat-traffic', prefix: '교통', subCategories: ['보행자안전', '교통표지판', '후진차량, 사각지대, 이면도로', '스쿨존, 통학로', '눈비오는날', '야간통행', '자전거 안전', '오토바이안전', '자동차안전', '대중교통안전', '교통사고', '여객선 항공기 사고'] },
+            { name: '폭력예방 및 신변안전', icon: '🛡️', color: 'cat-violence', prefix: '폭력', subCategories: ['학교폭력', '아동학대, 가정폭력', '성폭력', '생명존중, 자살예방'] },
+            { name: '약물사이버 중독예방', icon: '📱', color: 'cat-drug', prefix: '약물', subCategories: ['올바른 약 사용', '카페인 과다섭취', '음주', '흡연', '사이버중독'] },
+            { name: '재난안전', icon: '🔥', color: 'cat-disaster', prefix: '재난', subCategories: ['화재안전', '장소, 상황별 화재발생', '방독면', '황사, 미세먼지', '폭발, 붕괴', '각종 테러', '폭염', '호우, 낙뢰, 태풍, 홍수', '지진', '대설, 한파'] },
+            { name: '직업안전', icon: '👷', color: 'cat-job', prefix: '직업', subCategories: ['직업안전'] },
+            { name: '응급처치', icon: '🩹', color: 'cat-aid', prefix: '응급', subCategories: ['응급처치의 이해와 중요성', '심폐소생술', '상황별 응급처치'] }
+        ];
+        window.onload = function () { 
+            updateScale();
+            window.addEventListener('resize', updateScale);
+            callGas('getCategoryStructure', [], d => {
+                cats = (d && d.length > 0) ? d : fallbackCats; 
+                buildM(); 
+            });
+            hideL(); 
+        };
+        function updateScale() {
+            var scaler = document.getElementById('scaler');
+            var winW = window.innerWidth;
+            var winH = window.innerHeight;
+            var targetW = 1280;
+            var targetH = 800;
+            var scale = Math.min(winW / targetW, winH / targetH);
+            scaler.style.transform = 'scale(' + scale + ')';
+        }
+        function hideL() { document.getElementById('overlay').style.display = 'none'; }
+        function go(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById('s-' + id).classList.add('active'); window.scrollTo(0, 0); if (id === 'major') refreshBadge(); if (id !== 'summary' && sumTimer) { clearTimeout(sumTimer); sumTimer = null; } }
+        function goNameSelect() {
+            var sel = document.getElementById('name-select');
+            sel.innerHTML = '<option value="">불러오는 중... 🏃</option>';
+            go('name');
+            var renderNames = (ns) => {
+                var s = document.getElementById('name-select');
+                s.innerHTML = '<option value="">-- 이름을 골라주세요! --</option>';
+                if (!ns || ns.length === 0) {
+                    ns = ['행복한어린이', '슬기로운어린이', '용감한어린이', '씩씩한어린이', '친절한어린이'];
+                }
+                ns.forEach(n => {
+                    var o = document.createElement('option');
+                    o.value = n;
+                    o.textContent = n;
+                    s.appendChild(o);
+                });
+            };
+            callGas('getStudentNames', [], function(ns) {
+                if (ns && ns.length > 0) renderNames(ns);
+                else renderNames([]);
+            });
+        }
+        function confirmName() {
+            var v = document.getElementById('name-select').value;
+            if (!v) { alert('이름 선택!'); return; }
+            studentName = v;
+            document.querySelectorAll('.u-name').forEach(el => el.textContent = v);
+
+            // 통계 데이터 백그라운드 로딩
+            callGas('getDetailedStats', [studentName], function(s) {
+                if (s) {
+                    studentStats = s;
+                    medalCount = s.total;
+                    if (document.getElementById('top-medal')) {
+                        document.getElementById('top-medal').textContent = '🎖️ 내 메달: ' + s.total + '개';
+                    }
+                } else {
+                    studentStats = { total: 0, majorStats: {}, subStats: {} };
+                }
+                buildM();
+            });
+
+            // 버튼 클릭(사용자 제스처) 즉시 마이크 권한 요청
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                navigator.mediaDevices.getUserMedia({ audio: true })
+                    .then(function(stream) {
+                        // 권한 허용됨 -> 스트림 닫고 바로 메인 화면으로
+                        stream.getTracks().forEach(track => track.stop());
+                        go('major');
+                    })
+                    .catch(function(err) {
+                        // 권한 거절됨 또는 차단됨 -> 수동 허용 안내 화면으로
+                        console.log('마이크 권한 요청 실패:', err);
+                        go('mic');
+                    });
+            } else {
+                // 지원하지 않는 환경
+                go('mic');
+            }
+        }
+
+        function skipMic() {
+            go('major');
+        }
+        function refreshBadge() {
+            if (studentName) {
+                callGas('getDetailedStats', [studentName], function(s) {
+                    if (s) {
+                        studentStats = s;
+                        medalCount = s.total;
+                        if (document.getElementById('top-medal')) document.getElementById('top-medal').textContent = '🎖️ 내 메달: ' + s.total + '개';
+                        buildM();
+                    }
+                });
+            }
+        }
+        function buildM() {
+            var g = document.getElementById('major-grid');
+            if (!g) return;
+            g.innerHTML = '';
+            var data = (cats && cats.length > 0) ? cats : fallbackCats;
+            data.forEach(c => {
+                var d = document.createElement('div');
+                d.className = 'cat-card ' + (c.color || '');
+                
+                var barHtml = '';
+                var totalSub = (c.subCategories && c.subCategories.length > 0) ? c.subCategories.length : 1;
+                var completedSub = 0;
+                var totalMedals = 0;
+
+                if (studentStats && studentStats.subStats) {
+                    (c.subCategories || []).forEach(sub => {
+                        var m = (studentStats.subStats[sub] || 0);
+                        totalMedals += m;
+                        if (m > 0) completedSub++;
+                    });
+                }
+                
+                var percent = Math.round((completedSub / totalSub) * 100);
+                
+                barHtml = `
+                    <div style="width: 100%; margin-top: 15px;">
+                        <div style="display: flex; justify-content: flex-end; font-size: 16px; font-weight: 900; color: #555; margin-bottom: 8px;">
+                            <span>(${completedSub}/${totalSub})</span>
+                        </div>
+                        <div style="width: 100%; background: rgba(0,0,0,0.08); height: 14px; border-radius: 7px; overflow: hidden; position: relative; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);">
+                            <div style="width: ${percent}%; background: var(--success); height: 100%; border-radius: 7px; transition: width 0.5s ease-out;"></div>
+                        </div>
+                    </div>
+                `;
+
+                var progressText = '';
+                if (totalMedals > 0) {
+                    progressText = '<div style="font-size:14px; margin-top:10px; color:#444; font-weight:800; background:rgba(255,255,255,0.7); padding:5px 12px; border-radius:12px; display:inline-block;">🎖️ 총 ' + totalMedals + '개 메달</div>';
+                }
+                
+                d.innerHTML = '<span class="ci">' + c.icon + '</span><span class="cn" style="font-size: 22px; margin-bottom: 0;">' + c.name + '</span>' + progressText + barHtml;
+                d.onclick = () => { curMajor = c; buildS(); go('sub'); };
+                g.appendChild(d);
+            });
+        }
+        function buildS() { 
+            var g = document.getElementById('sub-grid'); 
+            g.innerHTML = ''; 
+            document.getElementById('sub-header').textContent = curMajor.name; 
+            (curMajor.subCategories || []).forEach(s => { 
+                var d = document.createElement('div'); 
+                d.className = 'cat-card sub-card'; 
+                var mCount = (studentStats && studentStats.subStats && studentStats.subStats[s]) || 0;
+                var badge = mCount > 0 ? '<span style="margin-left:auto; font-size:22px; background:#FFF3CD; padding:5px 15px; border-radius:20px; color:#856404; font-weight:800;">🎖️ ' + mCount + '개</span>' : '';
+                if (mCount >= 5) badge = '<span style="margin-left:auto; font-size:22px; background:#D4EDDA; padding:5px 15px; border-radius:20px; color:#155724; font-weight:800;">🏆 마스터!</span>';
+                d.innerHTML = '<span class="ci">' + curMajor.icon + '</span><span class="cn">' + s + '</span>' + badge; 
+                d.onclick = () => loadV(s); 
+                g.appendChild(d); 
+            }); 
+        }
+        function loadV(sub) { 
+            curSub = sub; 
+            document.getElementById('vid-header').textContent = sub; 
+            go('videos'); 
+            var mockVids = [
+                { id: 1, title: '[예시] 안전하게 길 건너기', youtubeId: 'h8E-uEktSWA', summary: '1. 횡단보도에서는 초록불에 건너요.\n2. 좌우를 살피고 손을 들고 건너요.', q1: '횡단보도는 무슨 불에 건너야 할까요?\n① 빨간불\n② 초록불\n③ 노란불', a1: '②', q2: '길을 건널 때 어떻게 해야 할까요?\n① 뛰어서 건너기\n② 스마트폰 보며 건너기\n③ 좌우를 살피며 건너기', a2: '③', q3: '길을 건널 때 손을 드는 이유는?\n① 키가 커 보이려고\n② 운전자에게 나를 잘 보이게 하려고\n③ 벌을 서는 중이라서', a3: '②' },
+                { id: 2, title: '[예시] 실내에서 뛰지 않아요', youtubeId: 'E_n-j1sM5_k', summary: '1. 실내에서는 뛰지 않고 천천히 걸어요.\n2. 문에 손이 끼지 않게 조심해요.', q1: '실내에서 걸을 때 올바른 방법은?\n① 천천히 걷기\n② 빠르게 뛰기\n③ 폴짝폴짝 뛰기', a1: '①', q2: '문을 닫을 때 조심해야 할 것은?\n① 세게 닫기\n② 손이 끼지 않게 조심하기\n③ 발로 닫기', a2: '②', q3: '친구와 복도에서 만났을 때?\n① 장난치기\n② 반갑게 인사하며 조심해서 지나가기\n③ 밀치기', a3: '②' }
+            ];
+            callGas('getVideoData', [curMajor.prefix, sub], function(d) {
+                curVids = (d && d.length > 0) ? d : mockVids; 
+                renderV();
+            });
+        }
+        function renderV() { 
+            var c = document.getElementById('vid-list'); 
+            c.innerHTML = ''; 
+            curVids.forEach((v, i) => { 
+                var isCompleted = studentStats && studentStats.completedVids && studentStats.completedVids[v.title];
+                var icon = isCompleted ? '<span style="font-size:36px; flex-shrink:0;">✅</span>' : '<span class="v-num">' + (i + 1) + '</span>';
+                var d = document.createElement('div'); 
+                d.className = 'v-card'; 
+                if (isCompleted) d.style.background = '#F6FFED';
+                d.innerHTML = icon + '<span class="v-card-title">' + v.title + '</span>'; 
+                d.onclick = () => { curVid = v; updateP(); document.getElementById('btn-video-done').classList.add('hidden'); go('ready'); }; 
+                c.appendChild(d); 
+            }); 
+        }
+        function updateP() { var s = '[' + curMajor.name + '-' + curSub + '] ' + curVid.title; document.getElementById('path-ready').textContent = s; document.getElementById('path-summary').textContent = s; document.getElementById('path-quiz').textContent = s; document.getElementById('ready-title').textContent = curVid.title; }
+        function watchVideo() { showVideoTutorial(); }
+        function realWatchVideo() { window.open('https://www.youtube-nocookie.com/embed/' + curVid.youtubeId + '?rel=0&autoplay=1', '_blank'); document.getElementById('btn-video-done').classList.remove('hidden'); }
+        var tutStep = 1;
+        function showVideoTutorial() {
+            tutStep = 1;
+            document.getElementById('tut-overlay').style.display = 'flex';
+            updateTut();
+        }
+        function updateTut() {
+            for(var i=1; i<=3; i++) {
+                document.getElementById('tut-step-' + i).style.display = (i === tutStep) ? 'block' : 'none';
+            }
+            if (tutStep < 3) {
+                document.getElementById('tut-btn').textContent = '다음 단계 ➔';
+                document.getElementById('tut-btn').onclick = function() { tutStep++; updateTut(); };
+            } else {
+                document.getElementById('tut-btn').textContent = '직접 해보기! ➔';
+                document.getElementById('tut-btn').onclick = function() { 
+                    document.getElementById('tut-overlay').style.display = 'none';
+                    realWatchVideo(); 
+                };
+            }
+        }
+        var isRecording = false;
+        var recognition = null;
+        var lastTranscript = '';
+
+        function speakSummary() {
+            var rawText = summaryPoints[curSumIdx] ? summaryPoints[curSumIdx].trim() : '';
+            if (!rawText) return;
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                var btn = document.getElementById('listen-btn');
+                if (btn.classList.contains('speaking')) {
+                    btn.textContent = '🔊 듣기';
+                    btn.classList.remove('speaking');
+                    return;
+                }
+                var utt = new SpeechSynthesisUtterance(rawText);
+                utt.lang = 'ko-KR';
+                utt.rate = 0.85;
+                utt.pitch = 1.1;
+                var voices = window.speechSynthesis.getVoices();
+                var koVoice = voices.find(v => v.lang === 'ko-KR');
+                if (koVoice) utt.voice = koVoice;
+                btn.classList.add('speaking');
+                btn.textContent = '⏹ 정지';
+                utt.onend = function() {
+                    btn.textContent = '🔊 듣기';
+                    btn.classList.remove('speaking');
+                };
+                window.speechSynthesis.speak(utt);
+            } else {
+                alert('이 브라우저는 음성 읽기를 지원하지 않아요.');
+            }
+        }
+
+        function toggleRecording() {
+            if (isRecording) { stopRecording(); } else { startRecording(); }
+        }
+
+        function startRecording() {
+            var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) { alert('이 브라우저는 음성 인식을 지원하지 않아요. Chrome을 사용해 주세요!'); return; }
+
+            recognition = new SpeechRecognition();
+            recognition.lang = 'ko-KR';
+            recognition.interimResults = true;
+            recognition.continuous = false;
+            lastTranscript = '';
+
+            var box = document.getElementById('transcript-box');
+            box.style.display = 'block';
+            box.innerHTML = '<span style="color:#94A3B8;">말하면 여기에 텍스트가 나타나요...</span>';
+
+            document.getElementById('recording-indicator').style.display = 'flex';
+            document.getElementById('skip-btn').style.display = 'block';
+
+            var btn = document.getElementById('record-btn');
+            btn.classList.add('recording');
+            btn.style.background = '#C62828';
+            btn.innerHTML = '⏹ 녹음 중지';
+            isRecording = true;
+
+            recognition.onresult = function(e) {
+                var interim = '';
+                for (var i = e.resultIndex; i < e.results.length; i++) {
+                    if (e.results[i].isFinal) {
+                        lastTranscript += e.results[i][0].transcript;
+                    } else {
+                        interim += e.results[i][0].transcript;
+                    }
+                }
+                var display = lastTranscript + (interim ? '<span style="color:#94A3B8;">' + interim + '</span>' : '');
+                box.innerHTML = display || '<span style="color:#94A3B8;">말하면 여기에 텍스트가 나타나요...</span>';
+            };
+            recognition.onend = function() { stopRecording(); };
+            recognition.onerror = function(e) {
+                if (e.error === 'no-speech') { stopRecording(); return; }
+                if (e.error === 'not-allowed' || e.error === 'service-not-allowed') {
+                    box.innerHTML = '<span style="color:#FF3B30;">🚨 마이크 권한이 거절되었어요.<br>브라우저 주소창의 권한 설정에서 마이크를 허용해주세요.</span>';
+                } else {
+                    box.innerHTML = '<span style="color:#FF3B30;">⚠️ 오류: ' + e.error + '</span>';
+                }
+                stopRecording();
+            };
+            try {
+                recognition.start();
+            } catch(e) {
+                stopRecording();
+            }
+        }
+
+        function editDistance(s1, s2) {
+            s1 = s1.toLowerCase(); s2 = s2.toLowerCase();
+            var costs = new Array();
+            for (var i = 0; i <= s1.length; i++) {
+                var lastValue = i;
+                for (var j = 0; j <= s2.length; j++) {
+                    if (i == 0) costs[j] = j;
+                    else {
+                        if (j > 0) {
+                            var newValue = costs[j - 1];
+                            if (s1.charAt(i - 1) != s2.charAt(j - 1)) newValue = Math.min(Math.min(newValue, lastValue), costs[j]) + 1;
+                            costs[j - 1] = lastValue;
+                            lastValue = newValue;
+                        }
+                    }
+                }
+                if (i > 0) costs[s2.length] = lastValue;
+            }
+            return costs[s2.length];
+        }
+
+        function calculateSimilarity(s1, s2) {
+            s1 = s1.replace(/\s+/g, '').replace(/[.,!?'"]/g, '');
+            s2 = s2.replace(/\s+/g, '').replace(/[.,!?'"]/g, '');
+            if (s1.length === 0) return 0;
+            var longer = s1, shorter = s2;
+            if (s1.length < s2.length) { longer = s2; shorter = s1; }
+            var longerLength = longer.length;
+            if (longerLength === 0) return 1.0;
+            return (longerLength - editDistance(longer, shorter)) / parseFloat(longerLength);
+        }
+
+        function stopRecording() {
+            isRecording = false;
+            if (recognition) { try { recognition.stop(); } catch(e) {} recognition = null; }
+
+            var indicator = document.getElementById('recording-indicator');
+            indicator.style.display = 'none';
+
+            var btn = document.getElementById('record-btn');
+            btn.classList.remove('recording');
+            btn.style.background = '';
+            btn.innerHTML = '🎤 다시 녹음하기';
+
+            var box = document.getElementById('transcript-box');
+            var spoken = lastTranscript.trim();
+
+            if (spoken) {
+                var summaryRaw = summaryPoints[curSumIdx] ? summaryPoints[curSumIdx].trim() : '';
+                var sim = calculateSimilarity(summaryRaw, spoken);
+                box.innerHTML = '<b>📝 내가 읽은 내용:</b><br>' + spoken;
+                if (sim >= 0.8) {
+                    box.innerHTML += '<br><br><span style="color:var(--success); font-size:22px; font-weight:900;">✅ 참 잘했어요! 다음으로 넘어갑니다.</span>';
+                    document.getElementById('skip-btn').style.display = 'none';
+                    setTimeout(saveReading, 2000);
+                } else {
+                    box.innerHTML += '<br><br><span style="color:var(--danger); font-size:20px; font-weight:800;">⚠️ 조금 더 또박또박 읽어볼까요?</span>';
+                }
+            } else {
+                box.innerHTML = '<span style="color:#94A3B8;">인식된 내용이 없어요. 다시 시도해보세요.</span>';
+            }
+        }
+
+        function skipSummary() {
+            if (recognition) { try { recognition.stop(); } catch(e) {} recognition = null; }
+            isRecording = false;
+            document.getElementById('recording-indicator').style.display = 'none';
+            document.getElementById('skip-btn').style.display = 'none';
+            var btn = document.getElementById('record-btn');
+            btn.classList.remove('recording');
+            btn.style.background = '';
+            btn.innerHTML = '🎤 녹음하기';
+            nextSummary();
+        }
+
+        function saveReading() {
+            var spoken = lastTranscript.trim();
+            var summaryRaw = summaryPoints[curSumIdx] ? summaryPoints[curSumIdx].trim() : '';
+            if (!spoken) { nextSummary(); return; }
+            var box = document.getElementById('transcript-box');
+            box.innerHTML += '<br><span style="color:#64748b;">저장 중...</span>';
+            callGas('saveReadingRecord', [studentName, curMajor.name, curSub, curVid.title, summaryRaw, spoken], function() {
+                nextSummary();
+            });
+        }
+
+        function goToSummary() {
+            var raw = curVid.summary || ''; summaryPoints = raw.split(/\d+[.)\s]|•|·|※/).filter(l => l.trim());
+            if (summaryPoints.length === 0 && raw.trim()) summaryPoints = [raw.trim()];
+            curSumIdx = 0; renderSummaryStep(); go('summary'); showP(true, 'summary_start');
+        }
+        function renderSummaryStep() {
+            var c = document.getElementById('summary-content'), s = document.getElementById('summary-step-num');
+            s.textContent = '핵심 요약 ' + (curSumIdx + 1) + ' / ' + summaryPoints.length; 
+            
+            var t = summaryPoints[curSumIdx].trim();
+            var highlightWords = ['절대', '꼭', '반드시', '천천히', '조심해서', '안전하게', '위험해요', '안 돼요', '다칠 수 있어요', '차례를', '정리해요', '손을 깨끗이', '오른쪽', '비상구', '119', '심폐소생술', '하임리히법', '대피', '도움', '보도', '인도', '초록불', '선생님께'];
+            
+            // 1단계: 붙어있는 복합어 띄어쓰기 정규화 (예: '안돼요' → '안 돼요', '다칠수있어요' → '다칠 수 있어요')
+            var spaceNorm = [
+                ['안돼요', '안 돼요'], ['안돼', '안 돼'],
+                ['다칠수있어요', '다칠 수 있어요'],
+                ['손을깨끗이', '손을 깨끗이']
+            ];
+            spaceNorm.forEach(function(pair) {
+                t = t.split(pair[0]).join(pair[1]);
+            });
+
+            // 2단계: 강조어 앞에 띄어쓰기가 누락된 경우 강제로 추가
+            highlightWords.forEach(function(word) {
+                var escaped = word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                var re = new RegExp('([가-힣A-Za-z0-9])' + escaped, 'g');
+                t = t.replace(re, '$1 ' + word);
+            });
+
+            // 3단계: 강조어에 빨간색 스타일 적용
+            var hlRegex = new RegExp('(' + highlightWords.map(function(w) { return w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }).join('|') + ')', 'g');
+            t = t.replace(hlRegex, '<span style="color: #FF3B30; font-weight: 900;">$1</span>');
+
+            c.innerHTML = t; 
+            
+            if (sumTimer) clearTimeout(sumTimer);
+            // 듣기/녹음 UI 초기화
+            isRecording = false;
+            if (recognition) { try { recognition.stop(); } catch(e) {} recognition = null; }
+            lastTranscript = '';
+            var box = document.getElementById('transcript-box');
+            box.style.display = 'none'; box.innerHTML = '';
+            document.getElementById('recording-indicator').style.display = 'none';
+            document.getElementById('skip-btn').style.display = 'none';
+            window.speechSynthesis && window.speechSynthesis.cancel();
+            var listenBtn = document.getElementById('listen-btn');
+            if (listenBtn) { listenBtn.innerHTML = '🔊 듣기'; listenBtn.classList.remove('speaking'); }
+            var recBtn = document.getElementById('record-btn');
+            if (recBtn) { recBtn.innerHTML = '🎤 녹음하기'; recBtn.classList.remove('recording'); recBtn.style.background = ''; }
+        }
+        function nextSummary() { if (curSumIdx < summaryPoints.length - 1) { curSumIdx++; renderSummaryStep(); } else startQuiz(1); }
+        function startQuiz(n) {
+            if (sumTimer) { clearTimeout(sumTimer); sumTimer = null; }
+            qIdx = n;
+            var ft = curVid['q' + n] || '', matches = [], m, re = /([\u2460-\u2469]|\d+[.)])/g;
+            while (m = re.exec(ft)) matches.push({ index: m.index, marker: m[0] }); var q = ft, opts = [];
+            if (matches.length > 0) { q = ft.substring(0, matches[0].index).trim(); for (var i = 0; i < matches.length; i++) { var s = matches[i].index, e = (i + 1 < matches.length) ? matches[i + 1].index : ft.length; var label = ft.substring(s, e).trim(); opts.push({ key: markerMap[matches[i].marker.trim()] || matches[i].marker.trim().replace(/[^0-9]/g, ''), label: label }); } }
+            curOptions = opts; document.getElementById('q-text').textContent = q; var oa = document.getElementById('options-area'); oa.innerHTML = ''; opts.forEach(o => { var b = document.createElement('button'); b.className = 'opt-btn'; b.textContent = o.label; b.onclick = () => checkAns(o); oa.appendChild(b); }); go('quiz');
+        }
+        function norm(t) { return String(t).replace(/[\s\(\)\[\]\.\,①-⑩·•※]/g, ''); }
+        function checkAns(v) {
+            var ik = String(v.key).trim(), il = norm(v.label); var cR = String(curVid['a' + qIdx] || '').trim(), cN = norm(cR), cK = markerMap[cR] || cR.replace(/[^0-9]/g, '');
+            var ok = (ik === cK) || (ik === cR) || (il.includes(cN) && cN.length > 0) || (cN.includes(il) && il.length > 0); showP(ok, ok ? 'correct' : 'wrong', v);
+        }
+        function showP(ok, type, u) {
+            var ov = document.getElementById('popup-overlay'), pT = document.getElementById('p-title'), pM = document.getElementById('p-msg'), pI = document.getElementById('p-icon'), pB = document.getElementById('p-btn'), pH = document.getElementById('p-hint-box'), pHB = document.getElementById('p-hint-btn'), pHA = document.getElementById('p-header-area');
+            function clean(t) { return String(t).replace(/^[\d[.)\s\u2460-\u2469·•※]+/, '').trim().replace(/\.$/, ''); }
+            pHA.style.display = 'block'; pM.style.display = 'block'; pH.style.display = 'none'; pHB.classList.add('hidden'); pB.classList.remove('hidden'); lastIsOk = false;
+            if (type === 'summary_start') { pI.textContent = '💡'; pT.textContent = '핵심 요약!'; pT.style.color = '#FF8400'; pM.innerHTML = '영상의 중요한 내용을<br>한 문장씩 함께 살펴보자!'; pB.textContent = '확인! ➔'; window.currentPopupMode = 'info'; }
+            else if (type === 'welcome') { pI.textContent = '👋'; pT.textContent = '반가워요!'; pT.style.color = 'var(--secondary)'; pM.innerHTML = '<b>' + studentName + '</b> 친구 반가워!<br>함께 안전 공부하러 가볼까?'; pB.textContent = '출발! ➔'; lastIsOk = true; window.currentPopupMode = 'name'; }
+            else if (ok) { pI.textContent = '⭐'; pT.textContent = '정답이야!'; pT.style.color = 'var(--success)'; var exp = clean(u.label); pM.innerHTML = '맞아! <b>' + exp + '</b><br>꼭 기억하자! ✨'; pB.textContent = '다음 단계로! ➔'; lastIsOk = true; window.currentPopupMode = 'quiz'; }
+            else { pI.textContent = '🧐'; pT.textContent = '다시 한 번 생각해보자!'; pT.style.color = '#FF8400'; pM.innerHTML = '<b>' + clean(u.label) + '</b>라고 생각했구나...<br>조금 더 고민해볼 수 있을까?'; pB.textContent = '다시 풀어보기 🔄'; pB.classList.add('hidden'); pHB.classList.remove('hidden'); var pt = summaryPoints[qIdx - 1] || summaryPoints[0] || ''; pH.innerHTML = '<b>💡 요약 힌트!</b><br>' + (qIdx) + '. ' + pt; window.currentPopupMode = 'quiz'; }
+            ov.style.display = 'flex';
+        }
+        function revealHint() { document.getElementById('p-msg').style.display = 'none'; document.getElementById('p-hint-box').style.display = 'block'; document.getElementById('p-hint-btn').classList.add('hidden'); document.getElementById('p-btn').classList.remove('hidden'); }
+        function closePopup() { document.getElementById('popup-overlay').style.display = 'none'; if (lastIsOk) { if (window.currentPopupMode === 'name') go('major'); else if (window.currentPopupMode === 'video') realWatchVideo(); else if (window.currentPopupMode === 'quiz') { if (qIdx < 3) startQuiz(qIdx + 1); else finishLearning(); } } }
+        function finishLearning() { 
+            go('result'); 
+            document.getElementById('total-medals').innerHTML = '🎖️ 전체 메달: 불러오는 중...'; 
+            document.getElementById('major-stats').innerHTML = ''; 
+            document.getElementById('sub-stats').innerHTML = ''; 
+            callGas('saveCompletion', [studentName, curMajor.name, curSub, curVid.title], function() {
+                callGas('getDetailedStats', [studentName], function(s) {
+                    if (s) {
+                        studentStats = s;
+                        renderStats(s);
+                    } else {
+                        studentStats = studentStats || { completedVids: {} };
+                        studentStats.completedVids = studentStats.completedVids || {};
+                        studentStats.completedVids[curVid.title] = true;
+                        renderStats({ total: 5, majorStats: { '생활안전': 2, '교통안전': 1 }, subStats: { '실내안전': 1, '보행안전': 1 } }); 
+                    }
+                });
+            });
+        }
+        function renderStats(s) { document.getElementById('total-medals').innerHTML = '🎖️ 전체 메달: <b>' + (s.total || 0) + '</b>개'; var mG = document.getElementById('major-stats'), sG = document.getElementById('sub-stats'); mG.innerHTML = ''; sG.innerHTML = ''; (Object.keys(s.majorStats || {})).forEach(k => { var d = document.createElement('div'); d.className = 'stat-item item-major'; d.innerHTML = '<span>🏆 ' + k + '</span> <b>' + s.majorStats[k] + '</b>'; mG.appendChild(d); }); (Object.keys(s.subStats || {})).forEach(k => { var d = document.createElement('div'); d.className = 'stat-item item-sub'; d.innerHTML = '<span>🎖️ ' + k + '</span> <b>' + s.subStats[k] + '</b>'; sG.appendChild(d); }); }
+    </script>
+</body>
+
+</html>
