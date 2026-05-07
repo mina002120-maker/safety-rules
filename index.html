@@ -1018,9 +1018,9 @@
         </div>
     </div>
     <script>
-        var GAS_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbzYTjO6jooiCbjNCIT3JSxSNMSeHShaHkeYjyLsXnqemWoleXvnuzB6QNKQljiAUgyA/exec'; // 여기에 구글 앱스 스크립트 웹앱 배포 URL을 넣으세요 (예: https://script.google.com/macros/s/.../exec)
+        var GAS_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbyosUmdjVniNY0WXEaUR_MARI6apL-UaPn_yJffDq2OkJU0ndHnonZZS54avacjHxXq/exec'; // 여기에 구글 앱스 스크립트 웹앱 배포 URL을 넣으세요 (예: https://script.google.com/macros/s/.../exec)
         function callGas(funcName, args, successHandler) {
-            if (typeof google !== 'undefined') {
+            if (typeof google !== 'undefined' && google.script && google.script.run) {
                 var runner = google.script.run;
                 if (successHandler) runner = runner.withSuccessHandler(successHandler);
                 runner[funcName].apply(runner, args);
@@ -1033,7 +1033,7 @@
                 if (successHandler) successHandler(null);
             }
         }
-        var cats = [], studentName = "", studentStats = null, curMajor = null, curSub = null, curVids = [], curVid = null, qIdx = 1, curOptions = [], summaryPoints = [], curSumIdx = 0, lastIsOk = false, medalCount = 0;
+        var cats = [], studentName = "", studentStats = null, curMajor = null, curSub = null, curVids = [], curVid = null, qIdx = 1, curOptions = [], summaryPoints = [], curSumIdx = 0, lastIsOk = false, medalCount = 0, recordedTranscripts = [];
         var markerMap = { '①': '1', '②': '2', '③': '3', '④': '4', '⑤': '5', '⑥': '6', '⑦': '7', '⑧': '8', '⑨': '9', '⑩': '10' };
         var sumTimer = null;
         var fallbackCats = [
@@ -1224,7 +1224,7 @@
                 d.className = 'v-card'; 
                 if (isCompleted) d.style.background = '#F6FFED';
                 d.innerHTML = icon + '<span class="v-card-title">' + v.title + '</span>'; 
-                d.onclick = () => { curVid = v; updateP(); document.getElementById('btn-video-done').classList.add('hidden'); go('ready'); }; 
+                d.onclick = () => { curVid = v; recordedTranscripts = []; updateP(); document.getElementById('btn-video-done').classList.add('hidden'); go('ready'); }; 
                 c.appendChild(d); 
             }); 
         }
@@ -1414,6 +1414,7 @@
             btn.classList.remove('recording');
             btn.style.background = '';
             btn.innerHTML = '🎤 녹음하기';
+            recordedTranscripts.push('(건너뜀)');
             nextSummary();
         }
 
@@ -1421,11 +1422,12 @@
             var spoken = lastTranscript.trim();
             var summaryRaw = summaryPoints[curSumIdx] ? summaryPoints[curSumIdx].trim() : '';
             if (!spoken) { nextSummary(); return; }
+            
+            recordedTranscripts.push(spoken);
+            
             var box = document.getElementById('transcript-box');
-            box.innerHTML += '<br><span style="color:#64748b;">저장 중...</span>';
-            callGas('saveReadingRecord', [studentName, curMajor.name, curSub, curVid.title, summaryRaw, spoken], function() {
-                nextSummary();
-            });
+            box.innerHTML += '<br><span style="color:#64748b;">저장됨</span>';
+            setTimeout(nextSummary, 1000);
         }
 
         function goToSummary() {
@@ -1498,7 +1500,18 @@
             pHA.style.display = 'block'; pM.style.display = 'block'; pH.style.display = 'none'; pHB.classList.add('hidden'); pB.classList.remove('hidden'); lastIsOk = false;
             if (type === 'summary_start') { pI.textContent = '💡'; pT.textContent = '핵심 요약!'; pT.style.color = '#FF8400'; pM.innerHTML = '영상의 중요한 내용을<br>한 문장씩 함께 살펴보자!'; pB.textContent = '확인! ➔'; window.currentPopupMode = 'info'; }
             else if (type === 'welcome') { pI.textContent = '👋'; pT.textContent = '반가워요!'; pT.style.color = 'var(--secondary)'; pM.innerHTML = '<b>' + studentName + '</b> 친구 반가워!<br>함께 안전 공부하러 가볼까?'; pB.textContent = '출발! ➔'; lastIsOk = true; window.currentPopupMode = 'name'; }
-            else if (ok) { pI.textContent = '⭐'; pT.textContent = '정답이야!'; pT.style.color = 'var(--success)'; var exp = clean(u.label); pM.innerHTML = '맞아! <b>' + exp + '</b><br>꼭 기억하자! ✨'; pB.textContent = '다음 단계로! ➔'; lastIsOk = true; window.currentPopupMode = 'quiz'; }
+            else if (ok) { 
+                pI.textContent = '⭐'; pT.textContent = '정답이야!'; pT.style.color = 'var(--success)'; 
+                var exp = clean(u.label); 
+                var qText = document.getElementById('q-text').textContent || '';
+                var isNegativeQ = /(안\s*되|안\s*되는|안\s*될|안\s*돼|위험|나쁜|틀린|않|아닌|말|금지)/.test(qText);
+                if (isNegativeQ) {
+                    pM.innerHTML = '맞아! <b>' + exp + '</b><br>위험해서 하면 안 돼! ✨';
+                } else {
+                    pM.innerHTML = '맞아! <b>' + exp + '</b><br>안전을 위해 꼭 기억하자! ✨';
+                }
+                pB.textContent = '다음 단계로! ➔'; lastIsOk = true; window.currentPopupMode = 'quiz'; 
+            }
             else { pI.textContent = '🧐'; pT.textContent = '다시 한 번 생각해보자!'; pT.style.color = '#FF8400'; pM.innerHTML = '<b>' + clean(u.label) + '</b>라고 생각했구나...<br>조금 더 고민해볼 수 있을까?'; pB.textContent = '다시 풀어보기 🔄'; pB.classList.add('hidden'); pHB.classList.remove('hidden'); var pt = summaryPoints[qIdx - 1] || summaryPoints[0] || ''; pH.innerHTML = '<b>💡 요약 힌트!</b><br>' + (qIdx) + '. ' + pt; window.currentPopupMode = 'quiz'; }
             ov.style.display = 'flex';
         }
@@ -1509,7 +1522,7 @@
             document.getElementById('total-medals').innerHTML = '🎖️ 전체 메달: 불러오는 중...'; 
             document.getElementById('major-stats').innerHTML = ''; 
             document.getElementById('sub-stats').innerHTML = ''; 
-            callGas('saveCompletion', [studentName, curMajor.name, curSub, curVid.title], function() {
+            callGas('saveCompletion', [studentName, curMajor.name, curSub, curVid.title, recordedTranscripts], function() {
                 callGas('getDetailedStats', [studentName], function(s) {
                     if (s) {
                         studentStats = s;
