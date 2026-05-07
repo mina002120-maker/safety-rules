@@ -1018,7 +1018,7 @@
         </div>
     </div>
     <script>
-        var GAS_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbyosUmdjVniNY0WXEaUR_MARI6apL-UaPn_yJffDq2OkJU0ndHnonZZS54avacjHxXq/exec'; // 여기에 구글 앱스 스크립트 웹앱 배포 URL을 넣으세요 (예: https://script.google.com/macros/s/.../exec)
+        var GAS_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbxPQgzvq85I3bjSBTmU5fDk9pGXdsKhg1jG3PgV-69RkVupLyT1DIoR_iv0PnpXdjFm/exec'; // 여기에 구글 앱스 스크립트 웹앱 배포 URL을 넣으세요 (예: https://script.google.com/macros/s/.../exec)
         function callGas(funcName, args, successHandler) {
             if (typeof google !== 'undefined' && google.script && google.script.run) {
                 var runner = google.script.run;
@@ -1396,7 +1396,9 @@
                 if (sim >= 0.8) {
                     box.innerHTML += '<br><br><span style="color:var(--success); font-size:22px; font-weight:900;">✅ 참 잘했어요! 다음으로 넘어갑니다.</span>';
                     document.getElementById('skip-btn').style.display = 'none';
-                    setTimeout(saveReading, 2000);
+                    btn.style.display = 'none';
+                    if (sumTimer) clearTimeout(sumTimer);
+                    sumTimer = setTimeout(saveReading, 1500);
                 } else {
                     box.innerHTML += '<br><br><span style="color:var(--danger); font-size:20px; font-weight:800;">⚠️ 조금 더 또박또박 읽어볼까요?</span>';
                 }
@@ -1414,6 +1416,7 @@
             btn.classList.remove('recording');
             btn.style.background = '';
             btn.innerHTML = '🎤 녹음하기';
+            if (sumTimer) clearTimeout(sumTimer);
             recordedTranscripts.push('(건너뜀)');
             nextSummary();
         }
@@ -1421,13 +1424,25 @@
         function saveReading() {
             var spoken = lastTranscript.trim();
             var summaryRaw = summaryPoints[curSumIdx] ? summaryPoints[curSumIdx].trim() : '';
-            if (!spoken) { nextSummary(); return; }
+            if (!spoken) { 
+                document.getElementById('transcript-box').innerHTML = '<span style="color:#94A3B8;">마이크 버튼을 누르고 위 문장을 또박또박 읽어보세요.</span>';
+                var btn = document.getElementById('record-btn');
+                btn.innerHTML = '🎤 녹음하기';
+                btn.classList.remove('recording');
+                btn.style.background = '';
+                btn.style.display = 'inline-block';
+                document.getElementById('skip-btn').style.display = 'inline-block';
+                document.getElementById('recording-indicator').style.display = 'none';
+                lastTranscript = "";
+                return; 
+            }
             
             recordedTranscripts.push(spoken);
             
             var box = document.getElementById('transcript-box');
             box.innerHTML += '<br><span style="color:#64748b;">저장됨</span>';
-            setTimeout(nextSummary, 1000);
+            if (sumTimer) clearTimeout(sumTimer);
+            sumTimer = setTimeout(nextSummary, 1000);
         }
 
         function goToSummary() {
@@ -1478,7 +1493,7 @@
             var listenBtn = document.getElementById('listen-btn');
             if (listenBtn) { listenBtn.innerHTML = '🔊 듣기'; listenBtn.classList.remove('speaking'); }
             var recBtn = document.getElementById('record-btn');
-            if (recBtn) { recBtn.innerHTML = '🎤 녹음하기'; recBtn.classList.remove('recording'); recBtn.style.background = ''; }
+            if (recBtn) { recBtn.innerHTML = '🎤 녹음하기'; recBtn.classList.remove('recording'); recBtn.style.background = ''; recBtn.style.display = 'inline-block'; }
         }
         function nextSummary() { if (curSumIdx < summaryPoints.length - 1) { curSumIdx++; renderSummaryStep(); } else startQuiz(1); }
         function startQuiz(n) {
